@@ -4,6 +4,6 @@
 
 option('download_js',
        type: 'boolean',
-       value: true,
+       value: false,
        description: 'Whether we should download JavaScript with Bower automatically.'
 )

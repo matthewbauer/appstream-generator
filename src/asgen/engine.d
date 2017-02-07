@@ -45,6 +45,7 @@ import asgen.backends.debian;
 import asgen.backends.ubuntu;
 import asgen.backends.archlinux;
 import asgen.backends.rpmmd;
+import asgen.backends.nix;
 
 import asgen.handlers.iconhandler;
 
@@ -83,6 +84,9 @@ public:
                 break;
             case Backend.RpmMd:
                 pkgIndex = new RPMPackageIndex (conf.archiveRoot);
+                break;
+            case Backend.Nix:
+                pkgIndex = new NixPackageIndex (conf.archiveRoot);
                 break;
             default:
                 throw new Exception ("No backend specified, can not continue!");

@@ -69,7 +69,8 @@ enum Backend
     Debian,
     Ubuntu,
     Archlinux,
-    RpmMd
+    RpmMd,
+    Nix,
 }
 
 enum GeneratorFeature
@@ -295,6 +296,10 @@ class Config
             case "mageia":
             case "rpmmd":
                 this.backend = Backend.RpmMd;
+                this.metadataType = DataType.XML;
+                break;
+            case "nix":
+                this.backend = Backend.Nix;
                 this.metadataType = DataType.XML;
                 break;
             default:

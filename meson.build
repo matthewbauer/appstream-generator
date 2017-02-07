@@ -396,23 +396,24 @@ curl_dep      = dependency('libcurl')
 freetype_dep  = dependency('freetype2')
 pango_dep     = dependency('pango')
 fontconfig_dep  = dependency('fontconfig')
+mustache_dep  = dependency('mustache-d')
 
 # A couple of hacks to use the right copy of mustache-d
-mustache_d_file = '/usr/include/d/mustache-d/mustache.d'
-mustache_dir = include_directories('/usr/include/d/mustache-d')
-if run_command('[', '-e', mustache_d_file, ']').returncode() != 0
-    mustached_src_dir = build_root + '/3rd-party/mustache-d'
-    if run_command('[', '-d', mustached_src_dir, ']').returncode() != 0
-        message('Fetching Mustache-D from Github...')
-        git_get_requests = run_command(['git', 'clone', 'https://github.com/repeatedly/mustache-d.git', mustached_src_dir])
-        if git_get_requests.returncode() != 0
-            error('Unable to fetch Mustache-D:\n' + git_get_requests.stderr())
-        endif
-    endif
-    mustache_d_file = mustached_src_dir + '/src/mustache.d'
-    mustache_dir = include_directories(mustached_src_dir + '/src')
-endif
-mustache_sources = [mustache_d_file]
+# mustache_d_file = '/usr/include/d/mustache-d/mustache.d'
+# mustache_dir = include_directories('/usr/include/d/mustache-d')
+# if run_command('[', '-e', mustache_d_file, ']').returncode() != 0
+#     mustached_src_dir = build_root + '/3rd-party/mustache-d'
+#     if run_command('[', '-d', mustached_src_dir, ']').returncode() != 0
+#         message('Fetching Mustache-D from Github...')
+#         git_get_requests = run_command(['git', 'clone', 'https://github.com/repeatedly/mustache-d.git', mustached_src_dir])
+#         if git_get_requests.returncode() != 0
+#             error('Unable to fetch Mustache-D:\n' + git_get_requests.stderr())
+#         endif
+#     endif
+#     mustache_d_file = mustached_src_dir + '/src/mustache.d'
+#     mustache_dir = include_directories(mustached_src_dir + '/src')
+# endif
+# mustache_sources = [mustache_d_file]
 
 # Set a few flags to work around compiler bugs
 if meson.get_compiler('d').get_id() == 'gcc'
@@ -442,11 +443,9 @@ endif
 asgen_exe = executable('appstream-generator',
     [asgen_sources,
      backend_sources,
-     gir_binding_sources,
-     mustache_sources],
+     gir_binding_sources],
     include_directories: [src_dir,
-                          gir_bind_dir,
-                          mustache_dir],
+                          gir_bind_dir],
     dependencies: [glib_dep,
                    gobject_dep,
                    gio_dep,
@@ -459,18 +458,17 @@ asgen_exe = executable('appstream-generator',
                    curl_dep,
                    freetype_dep,
                    fontconfig_dep,
-                   pango_dep],
+                   pango_dep,
+                   mustache_dep],
     install: true
 )
 
 asgen_test_exe = executable('asgen_test',
     [asgen_sources,
     backend_sources,
-    gir_binding_sources,
-    mustache_sources],
+    gir_binding_sources],
     include_directories: [src_dir,
-                          gir_bind_dir,
-                          mustache_dir],
+                          gir_bind_dir],
     dependencies: [glib_dep,
                    gobject_dep,
                    gio_dep,
@@ -483,7 +481,8 @@ asgen_test_exe = executable('asgen_test',
                    curl_dep,
                    freetype_dep,
                    fontconfig_dep,
-                   pango_dep],
+                   pango_dep,
+                   mustache_dep],
     d_args: meson.get_compiler('d').unittest_args()
 )
 test('asgen_tests', asgen_test_exe)
